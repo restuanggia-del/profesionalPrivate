@@ -11,5 +11,5 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		"message": "Welcome to Profesional Private API",
 	}
 
-	helpers.JSON(w, http.StatusOK, data)
+	helpers.JSON(w, http.StatusOK, "Success", data)
 }

@@ -13,5 +13,5 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 		"time":    time.Now().Format(time.RFC3339),
 	}
 
-	helpers.JSON(w, http.StatusOK, data)
+	helpers.JSON(w, http.StatusOK, "Service is healthy", data)
 }

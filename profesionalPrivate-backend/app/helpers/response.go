@@ -6,30 +6,19 @@ import (
 )
 
 type APIResponse struct {
-	Status  string      `json:"status"`
-	Message string      `json:"message,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
+	Success bool        `json:"success"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
-func JSON(w http.ResponseWriter, statusCode int, data interface{}) {
+func JSON(w http.ResponseWriter, status int, message string, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
+	w.WriteHeader(status)
 
 	response := APIResponse{
-		Status: "success",
-		Data:   data,
-	}
-
-	json.NewEncoder(w).Encode(response)
-}
-
-func Error(w http.ResponseWriter, statusCode int, message string) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-
-	response := APIResponse{
-		Status:  "error",
+		Success: status >= 200 && status < 300,
 		Message: message,
+		Data:    data,
 	}
 
 	json.NewEncoder(w).Encode(response)
