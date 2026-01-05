@@ -53,14 +53,12 @@ func (server *Server) Initialize(appConfig AppConfig, dbConfig DBConfig) {
 		panic("Failed on connecting to the database server")
 	}
 
-	// 🔥 INI PENTING
 	helpers.SetDB(server.DB)
 	server.DB.AutoMigrate(&models.User{})
 
 	server.Router = mux.NewRouter()
 	server.initializeRoutes()
 }
-
 func (server *Server) Run(addr string) {
 	fmt.Printf("Listening to port %s", addr)
 	log.Fatal(http.ListenAndServe(addr, server.Router))
