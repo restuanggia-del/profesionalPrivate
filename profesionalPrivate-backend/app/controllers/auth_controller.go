@@ -86,6 +86,4 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"token": token,
 		"user":  user,
 	})
-
-	helpers.JSON(w, http.StatusOK, "Login successful", user)
 }
