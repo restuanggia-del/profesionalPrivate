@@ -1,6 +1,8 @@
 package app
 
 import (
+	"net/http"
+
 	"github.com/restuanggia/profesionalPrivate/app/controllers"
 	"github.com/restuanggia/profesionalPrivate/app/middleware"
 )
@@ -15,10 +17,15 @@ func (server *Server) initializeRoutes() {
 	server.Router.HandleFunc("/api/users", controllers.GetUsers).Methods("GET")
 	server.Router.HandleFunc("/api/users/{id}", controllers.GetUserByID).Methods("GET")
 
+	server.Router.Handle(
+		"/api/me",
+		middleware.AuthMiddleware(
+			http.HandlerFunc(controllers.Me),
+		),
+	).Methods("GET")
+
 	teacher := server.Router.PathPrefix("/api/teacher").Subrouter()
 	teacher.Use(middleware.AuthMiddleware)
 	teacher.Use(middleware.RoleMiddleware("teacher"))
-
 	teacher.HandleFunc("/dashboard", controllers.TeacherDashboard).Methods("GET")
-
 }
