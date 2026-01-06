@@ -54,7 +54,11 @@ func (server *Server) Initialize(appConfig AppConfig, dbConfig DBConfig) {
 	}
 
 	helpers.SetDB(server.DB)
-	server.DB.AutoMigrate(&models.User{})
+
+	server.DB.AutoMigrate(
+		&models.User{},
+		&models.Course{},
+	)
 
 	server.Router = mux.NewRouter()
 	server.initializeRoutes()
