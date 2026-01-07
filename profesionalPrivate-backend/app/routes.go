@@ -29,6 +29,7 @@ func (server *Server) initializeRoutes() {
 	student.Use(middleware.RoleMiddleware("student"))
 
 	student.HandleFunc("/join", controllers.JoinCourse).Methods("POST")
+	student.HandleFunc("/courses", controllers.StudentCourses).Methods("GET")
 
 	teacher := server.Router.PathPrefix("/api/teacher").Subrouter()
 	teacher.Use(middleware.AuthMiddleware)
