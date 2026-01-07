@@ -37,6 +37,7 @@ func (server *Server) initializeRoutes() {
 
 	teacher.HandleFunc("/dashboard", controllers.TeacherDashboard).Methods("GET")
 	teacher.HandleFunc("/courses", controllers.CreateCourse).Methods("POST")
-
 	teacher.HandleFunc("/courses", controllers.GetMyCourses).Methods("GET")
+
+	teacher.HandleFunc("/lessons", controllers.CreateLesson).Methods("POST")
 }
