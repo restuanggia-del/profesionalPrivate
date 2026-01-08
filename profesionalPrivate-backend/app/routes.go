@@ -31,6 +31,10 @@ func (server *Server) initializeRoutes() {
 		"/courses/{course_id}/lessons",
 		controllers.StudentLessons,
 	).Methods("GET")
+	student.HandleFunc(
+		"/lessons/complete",
+		controllers.CompleteLesson,
+	).Methods("POST")
 
 	student.HandleFunc("/join", controllers.JoinCourse).Methods("POST")
 	student.HandleFunc("/courses", controllers.StudentCourses).Methods("GET")
