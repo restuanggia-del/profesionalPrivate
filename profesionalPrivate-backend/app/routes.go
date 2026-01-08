@@ -42,6 +42,7 @@ func (server *Server) initializeRoutes() {
 	teacher := server.Router.PathPrefix("/api/teacher").Subrouter()
 	teacher.Use(middleware.AuthMiddleware)
 	teacher.Use(middleware.RoleMiddleware("teacher"))
+	teacher.HandleFunc("/questions", controllers.CreateQuestion).Methods("POST")
 
 	teacher.HandleFunc("/dashboard", controllers.TeacherDashboard).Methods("GET")
 
