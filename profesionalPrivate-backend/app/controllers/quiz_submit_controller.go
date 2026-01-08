@@ -49,6 +49,35 @@ func SubmitQuiz(w http.ResponseWriter, r *http.Request) {
 
 	db.Model(&submission).Update("score", score)
 
+	db.Create(&models.QuizResult{
+		UserID: userID,
+		QuizID: req.QuizID,
+		Score:  score,
+	})
+
+	if score >= 70 {
+		var course models.Course
+		db.Joins("JOIN quizzes ON quizzes.course_id = courses.id").
+			Where("quizzes.id = ?", req.QuizID).
+			First(&course)
+
+		var existing models.Certificate
+		if db.Where("user_id = ? AND course_id = ?", userID, course.ID).
+			First(&existing).Error != nil {
+
+			var user models.User
+			db.First(&user, userID)
+
+			path := helpers.GenerateCertificatePDF(user.Name, course.Title)
+
+			db.Create(&models.Certificate{
+				UserID:   userID,
+				CourseID: course.ID,
+				FilePath: path,
+			})
+		}
+	}
+
 	helpers.JSON(w, http.StatusOK, "Quiz submitted", map[string]interface{}{
 		"score": score,
 	})
