@@ -29,6 +29,7 @@ func (server *Server) initializeRoutes() {
 	student.Use(middleware.RoleMiddleware("student"))
 	student.HandleFunc("/quiz", controllers.GetQuizForStudent).Methods("GET")
 	student.HandleFunc("/quiz/submit", controllers.SubmitQuiz).Methods("POST")
+	student.HandleFunc("/certificate", controllers.GenerateCertificate).Methods("POST")
 	student.HandleFunc(
 		"/courses/{course_id}/lessons",
 		controllers.StudentLessons,

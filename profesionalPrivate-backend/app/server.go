@@ -66,6 +66,7 @@ func (server *Server) Initialize(appConfig AppConfig, dbConfig DBConfig) {
 		&models.StudentAnswer{},
 		&models.QuizAnswer{},
 		&models.QuizSubmission{},
+		&models.Certificate{},
 	)
 
 	server.Router = mux.NewRouter()
