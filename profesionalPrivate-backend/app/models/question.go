@@ -10,6 +10,6 @@ type Question struct {
 	OptionB   string    `json:"option_b"`
 	OptionC   string    `json:"option_c"`
 	OptionD   string    `json:"option_d"`
-	Answer    string    `json:"-"` // disembunyikan
+	Answer    string    `json:"-"`
 	CreatedAt time.Time `json:"created_at"`
 }
