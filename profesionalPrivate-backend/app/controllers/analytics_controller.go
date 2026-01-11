@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	// "time"
 
 	"github.com/restuanggia/profesionalPrivate/app/helpers"
 )
@@ -17,26 +16,20 @@ func WeeklyAnalytics(w http.ResponseWriter, r *http.Request) {
 
 	var studentStats []WeeklyStat
 	db.Raw(`
-		SELECT DATE_FORMAT(created_at, '%Y-%u') as week, COUNT(*) as count
+		SELECT TO_CHAR(created_at, 'YYYY-IW') AS week, COUNT(*) AS count
 		FROM users
 		WHERE role = 'student'
 		GROUP BY week
+		ORDER BY week
 	`).Scan(&studentStats)
 
 	var quizStats []WeeklyStat
 	db.Raw(`
-		SELECT DATE_FORMAT(created_at, '%Y-%u') as week, COUNT(*) as count
-		FROM quiz_submissions
-		GROUP BY week
-	`).Scan(&quizStats)
-
-	var quizzes []WeeklyStat
-	db.Raw(`
-		SELECT DATE_TRUNC('week', created_at) as week, COUNT(*) as count
+		SELECT TO_CHAR(created_at, 'YYYY-IW') AS week, COUNT(*) AS count
 		FROM quiz_submissions
 		GROUP BY week
 		ORDER BY week
-	`).Scan(&quizzes)
+	`).Scan(&quizStats)
 
 	helpers.JSON(w, http.StatusOK, "Weekly analytics", map[string]interface{}{
 		"students": studentStats,
