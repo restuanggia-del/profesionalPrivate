@@ -49,11 +49,14 @@ func (server *Server) initializeRoutes() {
 	teacher.Use(middleware.AuthMiddleware)
 	teacher.Use(middleware.RoleMiddleware("teacher"))
 	teacher.HandleFunc("/questions", controllers.CreateQuestion).Methods("POST")
-
 	teacher.HandleFunc("/dashboard", controllers.TeacherDashboard).Methods("GET")
 	teacher.HandleFunc(
 		"/dashboard/analytics",
 		controllers.TeacherAnalytics,
+	).Methods("GET")
+	teacher.HandleFunc(
+		"/analytics/weekly",
+		controllers.WeeklyAnalytics,
 	).Methods("GET")
 
 	teacher.HandleFunc("/courses", controllers.CreateCourse).Methods("POST")
