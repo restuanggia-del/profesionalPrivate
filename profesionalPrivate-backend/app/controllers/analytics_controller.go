@@ -30,6 +30,14 @@ func WeeklyAnalytics(w http.ResponseWriter, r *http.Request) {
 		GROUP BY week
 	`).Scan(&quizStats)
 
+	var quizzes []WeeklyStat
+	db.Raw(`
+		SELECT DATE_TRUNC('week', created_at) as week, COUNT(*) as count
+		FROM quiz_submissions
+		GROUP BY week
+		ORDER BY week
+	`).Scan(&quizzes)
+
 	helpers.JSON(w, http.StatusOK, "Weekly analytics", map[string]interface{}{
 		"students": studentStats,
 		"quizzes":  quizStats,
