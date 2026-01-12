@@ -9,4 +9,5 @@ type User struct {
 	Password  string    `json:"-"`
 	Role      string    `json:"role"`
 	CreatedAt time.Time `json:"created_at"`
+	IsActive  bool      `json:"is_active" gorm:"default:true"`
 }

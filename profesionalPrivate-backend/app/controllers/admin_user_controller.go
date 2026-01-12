@@ -35,3 +35,17 @@ func ChangeUserRole(w http.ResponseWriter, r *http.Request) {
 
 	helpers.JSON(w, http.StatusOK, "Role updated", nil)
 }
+
+func SuspendUser(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	db := helpers.GetDB()
+
+	if err := db.Model(&models.User{}).
+		Where("id = ?", id).
+		Update("is_active", false).Error; err != nil {
+		helpers.JSON(w, http.StatusInternalServerError, "Failed to suspend user", nil)
+		return
+	}
+
+	helpers.JSON(w, http.StatusOK, "User suspended", nil)
+}

@@ -80,6 +80,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !user.IsActive {
+		helpers.JSON(w, http.StatusForbidden, "Account suspended", nil)
+		return
+	}
+
 	user.Password = ""
 
 	helpers.JSON(w, http.StatusOK, "Login successful", map[string]interface{}{
