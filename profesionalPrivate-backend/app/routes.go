@@ -76,9 +76,8 @@ func (server *Server) initializeRoutes() {
 
 	admin.HandleFunc("/dashboard", controllers.AdminDashboard).Methods("GET")
 
-	admin.HandleFunc("/users", controllers.AdminUsers).Methods("GET")
-	admin.HandleFunc("/users/{id}/role", controllers.ChangeUserRole).Methods("PATCH")
-
 	admin.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
+	admin.HandleFunc("/users/{id}/role", controllers.ChangeUserRole).Methods("PATCH")
 	admin.HandleFunc("/users/{id}/suspend", controllers.SuspendUser).Methods("PATCH")
+
 }

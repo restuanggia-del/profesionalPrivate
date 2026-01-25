@@ -9,14 +9,6 @@ import (
 	"github.com/restuanggia/profesionalPrivate/app/models"
 )
 
-func AdminUsers(w http.ResponseWriter, r *http.Request) {
-	db := helpers.GetDB()
-	var users []models.User
-	db.Find(&users)
-
-	helpers.JSON(w, http.StatusOK, "All users", users)
-}
-
 func ChangeUserRole(w http.ResponseWriter, r *http.Request) {
 	db := helpers.GetDB()
 	params := mux.Vars(r)
@@ -53,13 +45,13 @@ func SuspendUser(w http.ResponseWriter, r *http.Request) {
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	db := helpers.GetDB()
 
-	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
-	limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
-
-	if page < 1 {
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil || page < 1 {
 		page = 1
 	}
-	if limit < 1 {
+
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err != nil || limit < 1 {
 		limit = 10
 	}
 
@@ -68,8 +60,15 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
 	var total int64
 
-	db.Model(&models.User{}).Count(&total)
-	db.Offset(offset).Limit(limit).Find(&users)
+	if err := db.Model(&models.User{}).Count(&total).Error; err != nil {
+		helpers.JSON(w, http.StatusInternalServerError, "Failed to count users", nil)
+		return
+	}
+
+	if err := db.Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+		helpers.JSON(w, http.StatusInternalServerError, "Failed to fetch users", nil)
+		return
+	}
 
 	helpers.JSON(w, http.StatusOK, "User list", map[string]interface{}{
 		"data":  users,
