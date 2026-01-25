@@ -23,8 +23,20 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Name == "" || req.Email == "" || req.Password == "" {
+	if helpers.IsEmpty(req.Name) ||
+		helpers.IsEmpty(req.Email) ||
+		helpers.IsEmpty(req.Password) {
 		helpers.JSON(w, http.StatusBadRequest, "All fields are required", nil)
+		return
+	}
+
+	if !helpers.MinLength(req.Password, 6) {
+		helpers.JSON(w, http.StatusBadRequest, "Password must be at least 6 characters", nil)
+		return
+	}
+
+	if !helpers.IsValidRole(req.Role) {
+		helpers.JSON(w, http.StatusBadRequest, "Invalid role", nil)
 		return
 	}
 

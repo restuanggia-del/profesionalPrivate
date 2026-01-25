@@ -51,9 +51,30 @@ func SuspendUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	var users []models.User
 	db := helpers.GetDB()
 
-	db.Find(&users)
-	helpers.JSON(w, http.StatusOK, "All users", users)
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+
+	offset := (page - 1) * limit
+
+	var users []models.User
+	var total int64
+
+	db.Model(&models.User{}).Count(&total)
+	db.Offset(offset).Limit(limit).Find(&users)
+
+	helpers.JSON(w, http.StatusOK, "User list", map[string]interface{}{
+		"data":  users,
+		"page":  page,
+		"limit": limit,
+		"total": total,
+	})
 }
