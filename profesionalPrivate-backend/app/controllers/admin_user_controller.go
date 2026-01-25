@@ -49,3 +49,11 @@ func SuspendUser(w http.ResponseWriter, r *http.Request) {
 
 	helpers.JSON(w, http.StatusOK, "User suspended", nil)
 }
+
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	var users []models.User
+	db := helpers.GetDB()
+
+	db.Find(&users)
+	helpers.JSON(w, http.StatusOK, "All users", users)
+}
