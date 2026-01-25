@@ -16,11 +16,20 @@ func JSON(w http.ResponseWriter, status int, message string, data interface{}, e
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
+	var errData interface{}
+	if len(errors) > 0 {
+		errData = errors[0]
+	}
+
 	response := APIResponse{
 		Success: status >= 200 && status < 300,
 		Message: message,
 		Data:    data,
 		Errors:  errors,
+	}
+
+	if errData != nil {
+		response.Errors = errData
 	}
 
 	json.NewEncoder(w).Encode(response)
