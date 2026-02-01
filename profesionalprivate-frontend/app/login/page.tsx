@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
+    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -30,7 +31,8 @@ export default function LoginPage() {
         return;
       }
 
-      const { token, role } = result.data;
+      const token = result.data.token;
+      const role = result.data.user.role;
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
