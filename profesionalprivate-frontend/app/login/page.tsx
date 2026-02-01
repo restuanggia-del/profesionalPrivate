@@ -54,15 +54,12 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-center mb-6 text-black">
           Login
         </h1>
-
         {error && (
           <div className="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm">
             {error}
           </div>
         )}
-
         <div className="space-y-4">
-          {/* EMAIL */}
           <div>
             <label className="block text-sm font-medium mb-1 text-black">
               Email
@@ -83,8 +80,6 @@ export default function LoginPage() {
               required
             />
           </div>
-
-          {/* PASSWORD */}
           <div>
             <label className="block text-sm font-medium mb-1 text-black">
               Password
@@ -105,7 +100,6 @@ export default function LoginPage() {
               required
             />
           </div>
-
           <button
             type="submit"
             disabled={loading}
