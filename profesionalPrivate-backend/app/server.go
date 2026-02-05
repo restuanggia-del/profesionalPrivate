@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/restuanggia/profesionalPrivate/app/helpers"
+	"github.com/restuanggia/profesionalPrivate/app/middleware"
 	"github.com/restuanggia/profesionalPrivate/app/models"
 
 	"gorm.io/driver/postgres"
@@ -75,6 +76,8 @@ func (server *Server) Initialize(appConfig AppConfig, dbConfig DBConfig) {
 }
 func (server *Server) Run(addr string) {
 	fmt.Printf("Listening to port %s", addr)
+	handler := middleware.CORSMiddleware(server.Router)
+	log.Fatal(http.ListenAndServe(addr, handler))
 	log.Fatal(http.ListenAndServe(addr, server.Router))
 }
 
