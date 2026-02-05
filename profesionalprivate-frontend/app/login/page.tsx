@@ -12,7 +12,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
-    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -33,6 +32,9 @@ export default function LoginPage() {
 
       const token = result.data.token;
       const role = result.data.user.role;
+
+      document.cookie = `token=${token}; path=/`;
+      document.cookie = `role=${role}; path=/`;
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
