@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LogoutButton from "../components/LogoutButton";
 
 type User = {
   id: number;
@@ -78,22 +79,35 @@ export default function StudentPage() {
   }
 
   return (
-    <div className="min-h-screen p-10 bg-gray-100 text-black">
-      <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
-
-      {user && (
-        <div className="bg-white p-6 rounded-xl shadow border max-w-md">
-          <p className="mb-2">
-            <span className="font-semibold">Name:</span> {user.name}
-          </p>
-          <p className="mb-2">
-            <span className="font-semibold">Email:</span> {user.email}
-          </p>
-          <p>
-            <span className="font-semibold">Role:</span> {user.role}
-          </p>
+    <div className="min-h-screen bg-gray-100 p-10">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-black">
+            Student Dashboard 🎓
+          </h1>
+          <LogoutButton />
         </div>
-      )}
+
+        {/* Profile Card */}
+        {user && (
+          <div className="bg-white rounded-xl shadow border p-6">
+            <h2 className="text-xl font-semibold mb-4 text-black">Profile</h2>
+
+            <div className="space-y-2 text-black">
+              <p>
+                <b>Name:</b> {user.name}
+              </p>
+              <p>
+                <b>Email:</b> {user.email}
+              </p>
+              <p>
+                <b>Role:</b> {user.role}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
