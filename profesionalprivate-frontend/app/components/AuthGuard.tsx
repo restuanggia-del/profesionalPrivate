@@ -46,6 +46,9 @@ export default function AuthGuard({
           return;
         }
 
+        // ✅ SIMPAN USER SEKALI SAJA DI SINI
+        localStorage.setItem("user", JSON.stringify(result.data));
+
         if (!allow.includes(result.data.role)) {
           router.replace("/403");
           return;
@@ -60,7 +63,7 @@ export default function AuthGuard({
     };
 
     fetchMe();
-  }, []);
+  }, [router, allow]);
 
   if (loading) {
     return (

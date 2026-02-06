@@ -11,3 +11,26 @@ export function hasPermission(permission: string): boolean {
     return false;
   }
 }
+
+export const MENU_BY_PERMISSION = [
+  {
+    label: "Dashboard",
+    href: "/student",
+    permission: "student.dashboard",
+  },
+  {
+    label: "My Course",
+    href: "/student/course",
+    permission: "student.course",
+  },
+  {
+    label: "Teacher Panel",
+    href: "/teacher",
+    permission: "teacher.dashboard",
+  },
+  {
+    label: "Admin Panel",
+    href: "/admin",
+    permission: "admin.dashboard",
+  },
+];
