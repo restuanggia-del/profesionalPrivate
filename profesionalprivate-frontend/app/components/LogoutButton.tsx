@@ -21,31 +21,59 @@ export default function LogoutButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="text-sm text-red-600 hover:underline cursor-pointer"
+        className="
+          flex items-center gap-2
+          px-3 py-1.5
+          rounded-lg
+          text-red-600
+          hover:bg-red-100
+          hover:text-red-700
+          transition
+          text-sm font-medium
+          cursor-pointer
+        "
       >
         Logout
       </button>
 
       {open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[90%] max-w-sm shadow-lg">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-[90%] max-w-sm shadow-xl animate-in fade-in zoom-in">
             <h2 className="text-lg font-semibold text-black mb-2">
               Konfirmasi Logout
             </h2>
+
             <p className="text-sm text-gray-600 mb-6">
-              Apakah Anda yakin ingin logout?
+              Apakah Anda yakin ingin logout dari akun ini?
             </p>
 
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 rounded-lg border text-gray-700 hover:bg-gray-100 cursor-pointer"
+                className="
+                  px-4 py-2
+                  rounded-lg
+                  border
+                  text-gray-700
+                  hover:bg-gray-100
+                  transition
+                  cursor-pointer
+                "
               >
                 Batal
               </button>
+
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+                className="
+                  px-4 py-2
+                  rounded-lg
+                  bg-red-600
+                  text-white
+                  hover:bg-red-700
+                  transition
+                  cursor-pointer
+                "
               >
                 Logout
               </button>

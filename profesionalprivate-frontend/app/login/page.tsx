@@ -32,12 +32,14 @@ export default function LoginPage() {
 
       const token = result.data.token;
       const role = result.data.user.role;
+      const permissions = result.data.user.permissions || [];
 
       document.cookie = `token=${token}; path=/`;
       document.cookie = `role=${role}; path=/`;
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
+      localStorage.setItem("permissions", JSON.stringify(permissions));
 
       if (role === "admin") router.push("/admin");
       else if (role === "teacher") router.push("/teacher");

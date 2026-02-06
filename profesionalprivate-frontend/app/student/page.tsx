@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LogoutButton from "../components/LogoutButton";
+import Navbar from "../components/Navbar";
 
 type User = {
   id: number;
@@ -79,35 +79,37 @@ export default function StudentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-10">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-black">
-            Student Dashboard 🎓
-          </h1>
-          <LogoutButton />
-        </div>
-
-        {/* Profile Card */}
-        {user && (
-          <div className="bg-white rounded-xl shadow border p-6">
-            <h2 className="text-xl font-semibold mb-4 text-black">Profile</h2>
-
-            <div className="space-y-2 text-black">
-              <p>
-                <b>Name:</b> {user.name}
-              </p>
-              <p>
-                <b>Email:</b> {user.email}
-              </p>
-              <p>
-                <b>Role:</b> {user.role}
-              </p>
-            </div>
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-100 p-10">
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-black">
+              Student Dashboard 🎓
+            </h1>
           </div>
-        )}
+
+          {/* Profile Card */}
+          {user && (
+            <div className="bg-white rounded-xl shadow border p-6">
+              <h2 className="text-xl font-semibold mb-4 text-black">Profile</h2>
+
+              <div className="space-y-2 text-black">
+                <p>
+                  <b>Name:</b> {user.name}
+                </p>
+                <p>
+                  <b>Email:</b> {user.email}
+                </p>
+                <p>
+                  <b>Role:</b> {user.role}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
