@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import AuthGuard from "@/app/components/AuthGuard";
 import Navbar from "../components/Navbar";
+import UserAvatar from "@/app/components/UserAvatar";
+import CourseCard from "@/app/components/CourseCard";
+import AnimatedCard from "@/app/components/AnimatedCard";
+import SkeletonCard from "@/app/components/SkeletonCard";
 
 type User = {
   id: number;
@@ -71,34 +75,62 @@ export default function StudentPage() {
       ) : (
         <>
           <Navbar />
-
           <div className="min-h-screen bg-gray-100 p-10">
             <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8">
-              <div className="col-span-1 flex flex-col gap-8">
-                <div className="bg-gradient-to-br from-blue-500 to-sky-500 text-white p-8 rounded-3xl shadow-lg">
-                  <h1 className="text-2xl font-bold mb-6">
-                    Student Dashboard 🎓
-                  </h1>
-                  {user && (
-                    <div className="space-y-2 text-lg">
-                      <p>
-                        <b>Name:</b> {user.name}
-                      </p>
-                      <p>
-                        <b>Email:</b> {user.email}
-                      </p>
-                      <p>
-                        <b>Role:</b> {user.role}
-                      </p>
-                    </div>
+              <div className="flex flex-col gap-8">
+                <AnimatedCard>
+                  <div className="bg-gradient-to-br from-blue-500 to-sky-500 text-white p-8 rounded-3xl">
+                    {user && (
+                      <>
+                        <UserAvatar name={user.name} />
+
+                        <h1 className="text-2xl font-bold mt-4">
+                          Student Dashboard 🎓
+                        </h1>
+
+                        <div className="mt-4 space-y-1">
+                          <p>
+                            <b>Name:</b> {user.name}
+                          </p>
+                          <p>
+                            <b>Email:</b> {user.email}
+                          </p>
+                          <p>
+                            <b>Role:</b> {user.role}
+                          </p>
+                        </div>
+                      </>
+                    )}
+
+                    {loading && <SkeletonCard />}
+                  </div>
+                </AnimatedCard>
+
+                <AnimatedCard>
+                  <div className="bg-gradient-to-br from-blue-400 to-sky-400 text-white p-8 rounded-3xl">
+                    <h2 className="font-semibold mb-3">Quick Stats</h2>
+                    <p>📚 Active Courses: 3</p>
+                    <p>✅ Completed Lessons: 12</p>
+                    <p>⏳ Pending Tasks: 2</p>
+                  </div>
+                </AnimatedCard>
+              </div>
+              <div className="col-span-2 bg-gradient-to-br from-blue-400 to-sky-500 text-white p-8 rounded-3xl">
+                <h2 className="text-xl font-bold mb-6">Continue Learning</h2>
+
+                <div className="grid grid-cols-2 gap-6">
+                  {loading ? (
+                    <>
+                      <SkeletonCard />
+                      <SkeletonCard />
+                    </>
+                  ) : (
+                    <>
+                      <CourseCard title="React Basics" progress={70} />
+                      <CourseCard title="Next.js Mastery" progress={40} />
+                    </>
                   )}
                 </div>
-                <div className="bg-gradient-to-br from-blue-400 to-sky-400 text-white p-10 rounded-3xl shadow-lg text-center">
-                  Layout 2
-                </div>
-              </div>
-              <div className="col-span-2 bg-gradient-to-br from-blue-400 to-sky-500 text-white p-10 rounded-3xl shadow-lg flex items-center justify-center text-xl">
-                Layout 3
               </div>
             </div>
           </div>
