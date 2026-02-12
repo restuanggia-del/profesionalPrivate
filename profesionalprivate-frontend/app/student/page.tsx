@@ -73,32 +73,33 @@ export default function StudentPage() {
           <Navbar />
 
           <div className="min-h-screen bg-gray-100 p-10">
-            <div className="max-w-3xl mx-auto">
-              <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-black">
-                  Student Dashboard 🎓
-                </h1>
-              </div>
-
-              {user && (
-                <div className="bg-white rounded-xl shadow border p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-black">
-                    Profile
-                  </h2>
-
-                  <div className="space-y-2 text-black">
-                    <p>
-                      <b>Name:</b> {user.name}
-                    </p>
-                    <p>
-                      <b>Email:</b> {user.email}
-                    </p>
-                    <p>
-                      <b>Role:</b> {user.role}
-                    </p>
-                  </div>
+            <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8">
+              <div className="col-span-1 flex flex-col gap-8">
+                <div className="bg-gradient-to-br from-blue-500 to-sky-500 text-white p-8 rounded-3xl shadow-lg">
+                  <h1 className="text-2xl font-bold mb-6">
+                    Student Dashboard 🎓
+                  </h1>
+                  {user && (
+                    <div className="space-y-2 text-lg">
+                      <p>
+                        <b>Name:</b> {user.name}
+                      </p>
+                      <p>
+                        <b>Email:</b> {user.email}
+                      </p>
+                      <p>
+                        <b>Role:</b> {user.role}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
+                <div className="bg-gradient-to-br from-blue-400 to-sky-400 text-white p-10 rounded-3xl shadow-lg text-center">
+                  Layout 2
+                </div>
+              </div>
+              <div className="col-span-2 bg-gradient-to-br from-blue-400 to-sky-500 text-white p-10 rounded-3xl shadow-lg flex items-center justify-center text-xl">
+                Layout 3
+              </div>
             </div>
           </div>
         </>

@@ -82,43 +82,45 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 bg-white shadow text-black">
-      <div className="font-bold text-lg">Profesional Private</div>
+    <nav className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md">
+      <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+        <div className="text-xl font-bold leading-tight">
+          Profesional
+          <br />
+          Private
+        </div>
+        <div className="flex gap-10 items-center font-medium">
+          {MENU_BY_PERMISSION.filter((menu) =>
+            (user?.permissions ?? []).includes(menu.permission),
+          ).map((menu) => (
+            <Link
+              key={menu.permission}
+              href={menu.href}
+              className="hover:opacity-80 transition"
+            >
+              {menu.label}
+            </Link>
+          ))}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setOpen(!open)}
+              className="w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 transition flex items-center justify-center cursor-pointer"
+            >
+              <User size={22} />
+            </button>
 
-      <div className="flex gap-6 items-center">
-        {MENU_BY_PERMISSION.filter((menu) =>
-          (user?.permissions ?? []).includes(menu.permission),
-        ).map((menu) => (
-          <Link
-            key={menu.permission}
-            href={menu.href}
-            className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-          >
-            {menu.label}
-          </Link>
-        ))}
+            {open && (
+              <div className="absolute right-0 mt-3 w-56 bg-indigo-700 rounded-2xl shadow-xl p-5 text-center z-50">
+                {user?.name && (
+                  <div className="text-white font-semibold mb-4">
+                    {user.name}
+                  </div>
+                )}
 
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setOpen(!open)}
-            className="w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-200 transition flex items-center justify-center"
-          >
-            <User size={20} className="text-blue-600 cursor-pointer" />
-          </button>
-
-          {open && (
-            <div className="absolute right-0 mt-2 w-52 bg-white border rounded-xl shadow-lg py-2 z-50">
-              {user?.name && (
-                <div className="px-4 py-2 text-sm text-gray-600 border-b">
-                  {user.name}
-                </div>
-              )}
-
-              <div className="px-4 py-2 hover:bg-red-50">
                 <LogoutButton />
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </nav>
