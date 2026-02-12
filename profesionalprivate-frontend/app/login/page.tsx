@@ -112,7 +112,7 @@ export default function LoginPage() {
             className="
               w-full bg-blue-600 text-white py-2 rounded-lg
               hover:bg-blue-700 transition
-              disabled:opacity-50
+              disabled:opacity-50 cursor-pointer
             "
           >
             {loading ? "Loading..." : "Login"}
