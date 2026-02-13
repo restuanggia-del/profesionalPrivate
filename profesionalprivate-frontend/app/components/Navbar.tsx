@@ -110,9 +110,9 @@ export default function Navbar() {
             </button>
 
             {open && (
-              <div className="absolute right-0 mt-3 w-56 bg-indigo-700 rounded-2xl shadow-xl p-5 text-center z-50">
+              <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl p-5 text-center z-50">
                 {user?.name && (
-                  <div className="text-white font-semibold mb-4">
+                  <div className="text-gray-800 font-semibold mb-4">
                     {user.name}
                   </div>
                 )}
