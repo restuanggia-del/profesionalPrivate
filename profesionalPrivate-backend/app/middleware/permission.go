@@ -5,10 +5,11 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gorilla/mux"
 	"github.com/restuanggia/profesionalPrivate/app/helpers"
 )
 
-func PermissionMiddleware(requiredPermission string) func(http.Handler) http.Handler {
+func PermissionMiddleware(requiredPermission string) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 

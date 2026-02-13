@@ -49,7 +49,9 @@ export default function CourseDetailPage() {
           <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow">
             <h1 className="text-3xl font-bold">{course.title}</h1>
 
-            <p className="mt-4">{course.description}</p>
+            <p className="mt-4 text-gray-700">
+              {course.description || "No description available"}
+            </p>
 
             <div className="mt-6">
               <p className="font-semibold">Progress</p>

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/restuanggia/profesionalPrivate/app/helpers"
 )
 
@@ -35,7 +36,8 @@ func StudentCourses(w http.ResponseWriter, r *http.Request) {
 func StudentCourseDetail(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value("user_id")
 
-	id := r.PathValue("id")
+	vars := mux.Vars(r)
+	id := vars["id"]
 
 	db := helpers.GetDB()
 
@@ -49,7 +51,7 @@ func StudentCourseDetail(w http.ResponseWriter, r *http.Request) {
 	var result Result
 
 	db.Table("courses").
-		Select("courses.id, courses.title, courses.desc, enrollments.progress").
+		Select("courses.id, courses.title, courses.description, enrollments.progress").
 		Joins("JOIN enrollments ON enrollments.course_id = courses.id").
 		Where("courses.id = ? AND enrollments.user_id = ?", id, userID).
 		Scan(&result)
