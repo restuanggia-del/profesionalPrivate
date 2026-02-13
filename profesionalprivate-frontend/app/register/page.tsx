@@ -1,61 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
-  const router = useRouter();
-
+export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok || !result.success) {
-        setError(result.message || "Login failed");
-        return;
-      }
-
-      const token = result.data.token;
-      const role = result.data.user.role;
-      const permissions = result.data.user.permissions || [];
-
-      document.cookie = `token=${token}; path=/`;
-      document.cookie = `role=${role}; path=/`;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
-      localStorage.setItem("permissions", JSON.stringify(permissions));
-
-      if (role === "admin") router.push("/admin");
-      else if (role === "teacher") router.push("/teacher");
-      else router.push("/student");
-    } catch {
-      setError("Server error");
-    } finally {
-      setLoading(false);
+    if (password !== confirm) {
+      setError("Password tidak sama");
+      return;
     }
+
+    setLoading(true);
+
+    // TODO: hubungkan ke API register kamu
+    setTimeout(() => {
+      setLoading(false);
+      alert("Register berhasil (dummy)");
+    }, 1000);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-pink-500 px-4">
       <form
-        onSubmit={handleLogin}
+        onSubmit={handleRegister}
         className="
           w-full max-w-md
           bg-white/95 backdrop-blur
@@ -64,7 +40,7 @@ export default function LoginPage() {
         "
       >
         <h1 className="text-3xl font-bold text-center mb-6 text-black">
-          Log In
+          Register
         </h1>
 
         {error && (
@@ -110,6 +86,24 @@ export default function LoginPage() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium mb-1 text-black">
+              Konfirmasi Password
+            </label>
+            <input
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="••••••••"
+              className="
+                w-full border rounded-lg px-4 py-2
+                text-gray-900 placeholder-gray-400
+                focus:outline-none focus:ring-2 focus:ring-blue-500
+              "
+              required
+            />
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -122,14 +116,14 @@ export default function LoginPage() {
               disabled:opacity-50
             "
           >
-            {loading ? "Loading..." : "Log In"}
+            {loading ? "Loading..." : "Daftar"}
           </button>
         </div>
 
         <p className="text-center mt-6 text-gray-700">
-          Belum punya akun?{" "}
+          Sudah memiliki akun?{" "}
           <Link
-            href="/register"
+            href="/login"
             className="
               text-blue-600 font-medium
               cursor-pointer
@@ -137,7 +131,7 @@ export default function LoginPage() {
               transition
             "
           >
-            Register
+            Log In
           </Link>
         </p>
       </form>
