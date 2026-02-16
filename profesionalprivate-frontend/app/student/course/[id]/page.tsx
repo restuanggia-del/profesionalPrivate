@@ -62,6 +62,12 @@ export default function CourseDetailPage() {
                   style={{ width: `${course.progress}%` }}
                 />
               </div>
+              <a
+                href={`/student/course/${course.id}/lessons`}
+                className="inline-block mt-6 bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                View Lessons
+              </a>
             </div>
           </div>
         ) : (
