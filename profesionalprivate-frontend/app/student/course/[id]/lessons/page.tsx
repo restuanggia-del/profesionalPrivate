@@ -35,7 +35,15 @@ export default function LessonsPage() {
 
   useEffect(() => {
     fetchLessons();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const progress =
+    lessons.length === 0
+      ? 0
+      : Math.round(
+          (lessons.filter((l) => l.completed).length / lessons.length) * 100,
+        );
 
   const toggleComplete = async (lessonId: number) => {
     const token = localStorage.getItem("token");
@@ -63,6 +71,16 @@ export default function LessonsPage() {
 
       <div className="min-h-screen bg-gray-100 p-10 text-black">
         <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow">
+          <div className="mb-6">
+            <p className="mb-2 font-medium">Progress: {progress}%</p>
+            <div className="w-full bg-gray-200 h-3 rounded">
+              <div
+                className="bg-blue-500 h-3 rounded"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
           <h1 className="text-2xl font-bold mb-6">Course Lessons</h1>
 
           {loading ? (
@@ -74,7 +92,11 @@ export default function LessonsPage() {
               {lessons.map((lesson) => (
                 <div
                   key={lesson.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
+                  className={`flex items-center justify-between p-4 border rounded-lg transition ${
+                    lesson.completed
+                      ? "bg-green-50 border-green-300"
+                      : "bg-white"
+                  }`}
                 >
                   <span>{lesson.title}</span>
 
