@@ -14,12 +14,7 @@ func (server *Server) initializeRoutes() {
 	server.Router.HandleFunc("/api/login", controllers.Login).Methods("POST")
 	server.Router.HandleFunc("/api/users", controllers.GetUsers).Methods("GET")
 	server.Router.HandleFunc("/api/users/{id}", controllers.GetUserByID).Methods("GET")
-	server.Router.Handle(
-		"/api/me",
-		middleware.AuthMiddleware(
-			http.HandlerFunc(controllers.Me),
-		),
-	).Methods("GET")
+	server.Router.Handle("/api/me", middleware.AuthMiddleware(http.HandlerFunc(controllers.Me))).Methods("GET")
 
 	student := server.Router.PathPrefix("/api/student").Subrouter()
 	student.Use(middleware.AuthMiddleware)
@@ -30,14 +25,8 @@ func (server *Server) initializeRoutes() {
 	student.HandleFunc("/certificates", controllers.MyCertificates).Methods("GET")
 	student.HandleFunc("/certificates/{id}/download", controllers.DownloadCertificate).Methods("GET")
 	student.HandleFunc("/certificate", controllers.GenerateCertificate).Methods("POST")
-	student.HandleFunc(
-		"/courses/{course_id}/lessons",
-		controllers.StudentLessons,
-	).Methods("GET")
-	student.HandleFunc(
-		"/lessons/complete",
-		controllers.CompleteLesson,
-	).Methods("POST")
+	student.HandleFunc("/courses/{course_id}/lessons", controllers.StudentLessons).Methods("GET")
+	student.HandleFunc("/lessons/complete", controllers.CompleteLesson).Methods("POST")
 	student.HandleFunc("/join", controllers.JoinCourse).Methods("POST")
 	student.HandleFunc("/courses", controllers.StudentCourses).Methods("GET")
 	course := student.PathPrefix("/course").Subrouter()
@@ -49,18 +38,9 @@ func (server *Server) initializeRoutes() {
 	teacher.Use(middleware.RoleMiddleware("teacher"))
 	teacher.HandleFunc("/questions", controllers.CreateQuestion).Methods("POST")
 	teacher.HandleFunc("/dashboard", controllers.TeacherDashboard).Methods("GET")
-	teacher.HandleFunc(
-		"/dashboard/analytics",
-		controllers.TeacherAnalytics,
-	).Methods("GET")
-	teacher.HandleFunc(
-		"/analytics/weekly",
-		controllers.WeeklyAnalytics,
-	).Methods("GET")
-	teacher.HandleFunc(
-		"/analytics/charts",
-		controllers.ChartAnalytics,
-	).Methods("GET")
+	teacher.HandleFunc("/dashboard/analytics", controllers.TeacherAnalytics).Methods("GET")
+	teacher.HandleFunc("/analytics/weekly", controllers.WeeklyAnalytics).Methods("GET")
+	teacher.HandleFunc("/analytics/charts", controllers.ChartAnalytics).Methods("GET")
 	teacher.HandleFunc("/courses", controllers.CreateCourse).Methods("POST")
 	teacher.HandleFunc("/courses", controllers.GetMyCourses).Methods("GET")
 	teacher.HandleFunc("/lessons", controllers.CreateLesson).Methods("POST")

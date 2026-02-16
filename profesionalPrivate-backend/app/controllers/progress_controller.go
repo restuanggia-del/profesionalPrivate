@@ -20,14 +20,24 @@ func CompleteLesson(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	progress := models.LessonProgress{
-		UserID:    userID,
-		LessonID:  input.LessonID,
-		Completed: true,
-	}
-
 	db := helpers.GetDB()
-	db.Create(&progress)
+
+	var progress models.LessonProgress
+
+	result := db.Where("user_id = ? AND lesson_id = ?", userID, input.LessonID).
+		First(&progress)
+
+	if result.RowsAffected == 0 {
+		progress = models.LessonProgress{
+			UserID:    userID,
+			LessonID:  input.LessonID,
+			Completed: true,
+		}
+		db.Create(&progress)
+	} else {
+		progress.Completed = true
+		db.Save(&progress)
+	}
 
 	helpers.JSON(w, http.StatusOK, "Lesson marked as completed", progress)
 }
