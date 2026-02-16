@@ -8,4 +8,6 @@ type Lesson struct {
 	Content   string    `json:"content"`
 	CourseID  uint      `json:"course_id"`
 	CreatedAt time.Time `json:"created_at"`
+
+	Completed bool `json:"completed" gorm:"-"`
 }

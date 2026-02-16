@@ -10,13 +10,27 @@ import (
 )
 
 func StudentLessons(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(uint)
+
 	params := mux.Vars(r)
 	courseID, _ := strconv.Atoi(params["course_id"])
 
-	var lessons []models.Lesson
 	db := helpers.GetDB()
 
-	db.Where("course_id = ?", courseID).Find(&lessons)
+	var lessons []models.Lesson
+
+	db.Raw(`
+		SELECT l.*,
+		CASE
+			WHEN lp.id IS NULL THEN false
+			ELSE true
+		END AS completed
+		FROM lessons l
+		LEFT JOIN lesson_progresses lp
+			ON lp.lesson_id = l.id
+			AND lp.user_id = ?
+		WHERE l.course_id = ?
+	`, userID, courseID).Scan(&lessons)
 
 	helpers.JSON(w, http.StatusOK, "Course lessons", lessons)
 }

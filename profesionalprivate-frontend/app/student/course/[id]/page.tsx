@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import AuthGuard from "@/app/components/AuthGuard";
 import Navbar from "@/app/components/Navbar";
+import Link from "next/link";
 
 type Course = {
   id: number;
@@ -14,28 +15,33 @@ type Course = {
 
 export default function CourseDetailPage() {
   const { id } = useParams();
+
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchDetail = async () => {
-      const token = localStorage.getItem("token");
+  const fetchDetail = async () => {
+    const token = localStorage.getItem("token");
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/student/course/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/student/course/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      },
+    );
 
-      const result = await res.json();
-      setCourse(result.data);
+    const result = await res.json();
+    setCourse(result.data);
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchDetail();
       setLoading(false);
     };
 
-    fetchDetail();
+    load();
   }, [id]);
 
   return (
@@ -54,24 +60,25 @@ export default function CourseDetailPage() {
             </p>
 
             <div className="mt-6">
-              <p className="font-semibold">Progress</p>
+              <p className="font-semibold">Progress: {course.progress}%</p>
 
               <div className="bg-gray-200 h-3 rounded mt-2">
                 <div
-                  className="bg-blue-500 h-3 rounded"
+                  className="bg-blue-500 h-3 rounded transition-all duration-300"
                   style={{ width: `${course.progress}%` }}
                 />
               </div>
-              <a
-                href={`/student/course/${course.id}/lessons`}
-                className="inline-block mt-6 bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                View Lessons
-              </a>
             </div>
+
+            <Link
+              href={`/student/course/${course.id}/lessons`}
+              className="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition"
+            >
+              Mulai Belajar →
+            </Link>
           </div>
         ) : (
-          <p>Course not found</p>
+          <p>Kelas Tidak ditemukan</p>
         )}
       </div>
     </AuthGuard>
