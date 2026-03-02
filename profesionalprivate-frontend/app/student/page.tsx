@@ -19,6 +19,7 @@ export default function StudentPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -52,6 +53,7 @@ export default function StudentPage() {
         }
 
         setUser(result.data);
+        await fetchCourses();
       } catch (err) {
         setError("Server error. Please try again.");
       } finally {
@@ -60,6 +62,24 @@ export default function StudentPage() {
     };
 
     fetchUser();
+    const fetchCourses = async () => {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/student/courses`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        setCourses(result.data);
+      }
+    };
   }, []);
 
   return (
@@ -126,8 +146,14 @@ export default function StudentPage() {
                     </>
                   ) : (
                     <>
-                      <CourseCard title="React Basics" progress={70} />
-                      <CourseCard title="Next.js Mastery" progress={40} />
+                      {courses.slice(0, 2).map((course: any) => (
+                        <CourseCard
+                          key={course.id}
+                          id={course.id}
+                          title={course.title}
+                          progress={course.progress}
+                        />
+                      ))}
                     </>
                   )}
                 </div>
