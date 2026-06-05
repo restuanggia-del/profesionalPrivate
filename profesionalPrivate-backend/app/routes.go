@@ -30,7 +30,6 @@ func (server *Server) initializeRoutes() {
 	student.HandleFunc("/join", controllers.JoinCourse).Methods("POST")
 	student.HandleFunc("/courses", controllers.StudentCourses).Methods("GET")
 	course := student.PathPrefix("/course").Subrouter()
-	// course.Use(middleware.PermissionMiddleware("student.course"))
 	course.HandleFunc("/{id}", controllers.StudentCourseDetail).Methods("GET")
 
 	teacher := server.Router.PathPrefix("/api/teacher").Subrouter()
@@ -43,8 +42,11 @@ func (server *Server) initializeRoutes() {
 	teacher.HandleFunc("/analytics/charts", controllers.ChartAnalytics).Methods("GET")
 	teacher.HandleFunc("/courses", controllers.CreateCourse).Methods("POST")
 	teacher.HandleFunc("/courses", controllers.GetMyCourses).Methods("GET")
+	teacher.HandleFunc("/courses/{course_id}/lessons", controllers.GetLessonsByCourse).Methods("GET")
+	teacher.HandleFunc("/courses/{course_id}/quizzes", controllers.GetQuizzesByCourse).Methods("GET")
 	teacher.HandleFunc("/lessons", controllers.CreateLesson).Methods("POST")
 	teacher.HandleFunc("/quizzes", controllers.CreateQuiz).Methods("POST")
+	teacher.HandleFunc("/quizzes", controllers.GetQuizzesByCourse).Methods("GET")
 
 	admin := server.Router.PathPrefix("/api/admin").Subrouter()
 	admin.Use(middleware.AuthMiddleware)
@@ -53,5 +55,4 @@ func (server *Server) initializeRoutes() {
 	admin.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
 	admin.HandleFunc("/users/{id}/role", controllers.ChangeUserRole).Methods("PATCH")
 	admin.HandleFunc("/users/{id}/suspend", controllers.SuspendUser).Methods("PATCH")
-
 }

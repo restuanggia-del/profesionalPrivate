@@ -1,43 +1,69 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
+  const router = useRouter();
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [role, setRole] = useState("student");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     if (password !== confirm) {
       setError("Password tidak sama");
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password minimal 6 karakter");
+      return;
+    }
+
     setLoading(true);
 
-    // TODO: hubungkan ke API register kamu
-    setTimeout(() => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, role }),
+        },
+      );
+
+      const result = await res.json();
+
+      if (!res.ok || !result.success) {
+        setError(result.message || "Registrasi gagal");
+        return;
+      }
+
+      setSuccess("Registrasi berhasil! Silakan login.");
+      setTimeout(() => router.push("/login"), 1500);
+    } catch {
+      setError("Tidak dapat terhubung ke server");
+    } finally {
       setLoading(false);
-      alert("Register berhasil (dummy)");
-    }, 1000);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-pink-500 px-4">
       <form
         onSubmit={handleRegister}
-        className="
-          w-full max-w-md
-          bg-white/95 backdrop-blur
-          p-8 rounded-2xl
-          shadow-2xl
-        "
+        className="w-full max-w-md bg-white/95 backdrop-blur p-8 rounded-2xl shadow-2xl"
       >
         <h1 className="text-3xl font-bold text-center mb-6 text-black">
           Register
@@ -49,7 +75,27 @@ export default function RegisterPage() {
           </div>
         )}
 
+        {success && (
+          <div className="bg-green-100 text-green-600 p-2 rounded mb-4 text-sm">
+            {success}
+          </div>
+        )}
+
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1 text-black">
+              Nama Lengkap
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="John Doe"
+              className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-1 text-black">
               Email
@@ -59,13 +105,23 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@gmail.com"
-              className="
-                w-full border rounded-lg px-4 py-2
-                text-gray-900 placeholder-gray-400
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-              "
+              className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1 text-black">
+              Daftar Sebagai
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full border rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            >
+              <option value="student">Siswa</option>
+              <option value="teacher">Guru</option>
+            </select>
           </div>
 
           <div>
@@ -77,11 +133,7 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="
-                w-full border rounded-lg px-4 py-2
-                text-gray-900 placeholder-gray-400
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-              "
+              className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -95,11 +147,7 @@ export default function RegisterPage() {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="••••••••"
-              className="
-                w-full border rounded-lg px-4 py-2
-                text-gray-900 placeholder-gray-400
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-              "
+              className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -107,14 +155,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="
-              w-full bg-blue-600 text-white py-2 rounded-lg
-              cursor-pointer
-              hover:bg-blue-700
-              active:scale-[0.98]
-              transition
-              disabled:opacity-50
-            "
+            className="w-full bg-blue-600 text-white py-2 rounded-lg cursor-pointer hover:bg-blue-700 active:scale-[0.98] transition disabled:opacity-50"
           >
             {loading ? "Loading..." : "Daftar"}
           </button>
@@ -124,12 +165,7 @@ export default function RegisterPage() {
           Sudah memiliki akun?{" "}
           <Link
             href="/login"
-            className="
-              text-blue-600 font-medium
-              cursor-pointer
-              hover:text-blue-800
-              transition
-            "
+            className="text-blue-600 font-medium cursor-pointer hover:text-blue-800 transition"
           >
             Log In
           </Link>
