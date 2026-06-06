@@ -27,26 +27,28 @@ export default function LoginPage() {
       const result = await res.json();
 
       if (!res.ok || !result.success) {
-        setError(result.message || "Login failed");
+        setError(result.message || "Login gagal");
         return;
       }
 
       const token = result.data.token;
       const role = result.data.user.role;
-      const permissions = result.data.user.permissions || [];
 
-      document.cookie = `token=${token}; path=/`;
-      document.cookie = `role=${role}; path=/`;
-
+      // Simpan ke localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
-      localStorage.setItem("permissions", JSON.stringify(permissions));
 
+      // Set cookie dengan format yang benar untuk Next.js middleware
+      const maxAge = 60 * 60 * 24 * 7; // 7 hari
+      document.cookie = `token=${token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+      document.cookie = `role=${role}; path=/; max-age=${maxAge}; SameSite=Lax`;
+
+      // Redirect berdasarkan role
       if (role === "admin") router.push("/admin");
       else if (role === "teacher") router.push("/teacher");
       else router.push("/student");
     } catch {
-      setError("Server error");
+      setError("Tidak dapat terhubung ke server");
     } finally {
       setLoading(false);
     }
@@ -56,12 +58,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-pink-500 px-4">
       <form
         onSubmit={handleLogin}
-        className="
-          w-full max-w-md
-          bg-white/95 backdrop-blur
-          p-8 rounded-2xl
-          shadow-2xl
-        "
+        className="w-full max-w-md bg-white/95 backdrop-blur p-8 rounded-2xl shadow-2xl"
       >
         <h1 className="text-3xl font-bold text-center mb-6 text-black">
           Log In
@@ -83,11 +80,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@gmail.com"
-              className="
-                w-full border rounded-lg px-4 py-2
-                text-gray-900 placeholder-gray-400
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-              "
+              className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -101,11 +94,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="
-                w-full border rounded-lg px-4 py-2
-                text-gray-900 placeholder-gray-400
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-              "
+              className="w-full border rounded-lg px-4 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -113,14 +102,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="
-              w-full bg-blue-600 text-white py-2 rounded-lg
-              cursor-pointer
-              hover:bg-blue-700
-              active:scale-[0.98]
-              transition
-              disabled:opacity-50
-            "
+            className="w-full bg-blue-600 text-white py-2 rounded-lg cursor-pointer hover:bg-blue-700 active:scale-[0.98] transition disabled:opacity-50"
           >
             {loading ? "Loading..." : "Log In"}
           </button>
@@ -130,12 +112,7 @@ export default function LoginPage() {
           Belum punya akun?{" "}
           <Link
             href="/register"
-            className="
-              text-blue-600 font-medium
-              cursor-pointer
-              hover:text-blue-800
-              transition
-            "
+            className="text-blue-600 font-medium cursor-pointer hover:text-blue-800 transition"
           >
             Register
           </Link>

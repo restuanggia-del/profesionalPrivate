@@ -36,6 +36,8 @@ func (server *Server) initializeRoutes() {
 	teacher.Use(middleware.AuthMiddleware)
 	teacher.Use(middleware.RoleMiddleware("teacher"))
 	teacher.HandleFunc("/questions", controllers.CreateQuestion).Methods("POST")
+	teacher.HandleFunc("/questions/{id}", controllers.DeleteQuestion).Methods("DELETE")
+	teacher.HandleFunc("/quizzes/{id}", controllers.GetQuizByID).Methods("GET")
 	teacher.HandleFunc("/dashboard", controllers.TeacherDashboard).Methods("GET")
 	teacher.HandleFunc("/dashboard/analytics", controllers.TeacherAnalytics).Methods("GET")
 	teacher.HandleFunc("/analytics/weekly", controllers.WeeklyAnalytics).Methods("GET")

@@ -37,11 +37,9 @@ func CreateQuiz(w http.ResponseWriter, r *http.Request) {
 func GetQuizzesByCourse(w http.ResponseWriter, r *http.Request) {
 	db := helpers.GetDB()
 
-	// Coba ambil dari path variable dulu
 	vars := mux.Vars(r)
 	courseIDStr := vars["course_id"]
 
-	// Kalau tidak ada di path, coba query param
 	if courseIDStr == "" {
 		courseIDStr = r.URL.Query().Get("course_id")
 	}
@@ -64,4 +62,24 @@ func GetQuizzesByCourse(w http.ResponseWriter, r *http.Request) {
 		Find(&quizzes)
 
 	helpers.JSON(w, http.StatusOK, "Quizzes retrieved", quizzes)
+}
+
+func GetQuizByID(w http.ResponseWriter, r *http.Request) {
+	db := helpers.GetDB()
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		helpers.JSON(w, http.StatusBadRequest, "ID tidak valid", nil)
+		return
+	}
+
+	var quiz models.Quiz
+	if err := db.Preload("Questions").First(&quiz, id).Error; err != nil {
+		helpers.JSON(w, http.StatusNotFound, "Quiz tidak ditemukan", nil)
+		return
+	}
+
+	helpers.JSON(w, http.StatusOK, "Quiz retrieved", quiz)
 }
