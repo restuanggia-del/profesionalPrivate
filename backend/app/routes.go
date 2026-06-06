@@ -45,6 +45,8 @@ func (server *Server) initializeRoutes() {
 	teacher.HandleFunc("/courses/{course_id}/lessons", controllers.GetLessonsByCourse).Methods("GET")
 	teacher.HandleFunc("/courses/{course_id}/quizzes", controllers.GetQuizzesByCourse).Methods("GET")
 	teacher.HandleFunc("/lessons", controllers.CreateLesson).Methods("POST")
+	teacher.HandleFunc("/lessons/{id}", controllers.UpdateLesson).Methods("PUT")
+	teacher.HandleFunc("/lessons/{id}", controllers.DeleteLesson).Methods("DELETE")
 	teacher.HandleFunc("/quizzes", controllers.CreateQuiz).Methods("POST")
 	teacher.HandleFunc("/quizzes", controllers.GetQuizzesByCourse).Methods("GET")
 

@@ -11,6 +11,7 @@ import {
   FileText,
   Trash2,
   ChevronRight,
+  Pencil,
 } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
@@ -224,6 +225,143 @@ function AddQuizModal({
   );
 }
 
+function EditLessonModal({
+  lesson,
+  onClose,
+  onUpdated,
+}: {
+  lesson: Lesson;
+  onClose: () => void;
+  onUpdated: () => void;
+}) {
+  const [title, setTitle] = useState(lesson.title);
+  const [content, setContent] = useState(lesson.content);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${API}/api/teacher/lessons/${lesson.id}`, {
+        method: "PUT",
+        headers: authHeaders(),
+        body: JSON.stringify({ title, content }),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        setError(result.message || "Gagal memperbarui materi");
+        return;
+      }
+      onUpdated();
+      onClose();
+    } catch {
+      setError("Tidak dapat terhubung ke server");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl">
+        <h2 className="text-xl font-bold text-gray-800 mb-6">Edit Materi</h2>
+        {error && (
+          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Judul Materi
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Isi Materi
+            </label>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={6}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              required
+            />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl hover:bg-gray-50 transition"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl hover:bg-indigo-700 transition disabled:opacity-50"
+            >
+              {loading ? "Menyimpan..." : "Simpan Perubahan"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function ConfirmDeleteModal({
+  onClose,
+  onConfirm,
+}: {
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl text-center">
+        <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Trash2 size={24} className="text-red-500" />
+        </div>
+        <h2 className="text-lg font-bold text-gray-800 mb-2">Hapus Materi?</h2>
+        <p className="text-gray-500 text-sm mb-6">
+          Materi yang dihapus tidak bisa dikembalikan.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl hover:bg-gray-50 transition"
+          >
+            Batal
+          </button>
+          <button
+            onClick={async () => {
+              setLoading(true);
+              await onConfirm();
+              setLoading(false);
+            }}
+            disabled={loading}
+            className="flex-1 bg-red-500 text-white py-2.5 rounded-xl hover:bg-red-600 transition disabled:opacity-50"
+          >
+            {loading ? "Menghapus..." : "Ya, Hapus"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TeacherCourseDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -235,6 +373,8 @@ export default function TeacherCourseDetailPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"lessons" | "quizzes">("lessons");
   const [showAddLesson, setShowAddLesson] = useState(false);
+  const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
+  const [deletingLessonId, setDeletingLessonId] = useState<number | null>(null);
   const [showAddQuiz, setShowAddQuiz] = useState(false);
 
   const fetchData = async () => {
@@ -408,12 +548,22 @@ export default function TeacherCourseDetailPage() {
                           )}
                         </p>
                       </div>
-                      <button
-                        className="text-gray-300 hover:text-red-400 transition opacity-0 group-hover:opacity-100"
-                        title="Hapus materi"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition shrink-0">
+                        <button
+                          onClick={() => setEditingLesson(lesson)}
+                          className="p-1.5 text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 rounded-lg transition"
+                          title="Edit materi"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          onClick={() => setDeletingLessonId(lesson.id)}
+                          className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                          title="Hapus materi"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -490,6 +640,30 @@ export default function TeacherCourseDetailPage() {
             courseId={courseId}
             onClose={() => setShowAddQuiz(false)}
             onCreated={fetchData}
+          />
+        )}
+
+        {/* Modal Edit Materi */}
+        {editingLesson && (
+          <EditLessonModal
+            lesson={editingLesson}
+            onClose={() => setEditingLesson(null)}
+            onUpdated={fetchData}
+          />
+        )}
+
+        {/* Konfirmasi Hapus */}
+        {deletingLessonId !== null && (
+          <ConfirmDeleteModal
+            onClose={() => setDeletingLessonId(null)}
+            onConfirm={async () => {
+              await fetch(`${API}/api/teacher/lessons/${deletingLessonId}`, {
+                method: "DELETE",
+                headers: authHeaders(),
+              });
+              setDeletingLessonId(null);
+              fetchData();
+            }}
           />
         )}
       </div>
