@@ -12,6 +12,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
+import { useRouter } from "next/navigation";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
 
@@ -25,11 +26,9 @@ function authHeaders() {
   };
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 type User = { id: number; name: string; email: string; role: string };
 type Course = { id: number; title: string; progress: number };
 
-// ── Progress Bar ──────────────────────────────────────────────────────────────
 function ProgressBar({ value }: { value: number }) {
   return (
     <div className="w-full bg-gray-100 rounded-full h-2 mt-2">
@@ -41,7 +40,6 @@ function ProgressBar({ value }: { value: number }) {
   );
 }
 
-// ── Stat Card ─────────────────────────────────────────────────────────────────
 function StatCard({
   icon,
   label,
@@ -64,7 +62,6 @@ function StatCard({
   );
 }
 
-// ── Modal Join Kelas ──────────────────────────────────────────────────────────
 function JoinCourseModal({
   onClose,
   onJoined,
@@ -159,8 +156,8 @@ function JoinCourseModal({
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
 export default function StudentPage() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -205,7 +202,6 @@ export default function StudentPage() {
     fetchAll();
   }, []);
 
-  // Hitung stats dari data real
   const totalCourses = courses.length;
   const avgProgress =
     courses.length > 0
@@ -257,13 +253,22 @@ export default function StudentPage() {
               </h1>
               <p className="text-gray-500 mt-1">Semangat belajar hari ini!</p>
             </div>
-            <button
-              onClick={() => setShowJoin(true)}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl hover:bg-blue-700 transition text-sm font-medium"
-            >
-              <Plus size={16} />
-              Gabung Kelas
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.push("/student/certificates")}
+                className="flex items-center gap-2 border border-amber-400 text-amber-600 px-4 py-2.5 rounded-xl hover:bg-amber-50 transition text-sm font-medium"
+              >
+                <Award size={16} />
+                Sertifikat
+              </button>
+              <button
+                onClick={() => setShowJoin(true)}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl hover:bg-blue-700 transition text-sm font-medium"
+              >
+                <Plus size={16} />
+                Gabung Kelas
+              </button>
+            </div>
           </div>
 
           {/* Stats */}

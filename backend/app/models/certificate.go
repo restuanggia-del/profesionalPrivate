@@ -3,9 +3,9 @@ package models
 import "time"
 
 type Certificate struct {
-	ID        uint      `gorm:"primaryKey"`
-	UserID    uint
-	CourseID  uint
-	FilePath  string
-	CreatedAt time.Time
+	ID        uint      `gorm:"primaryKey" json:"ID"`
+	UserID    uint      `json:"UserID"`
+	CourseID  uint      `json:"CourseID"`
+	FilePath  string    `json:"FilePath"`
+	CreatedAt time.Time `json:"CreatedAt"`
 }
