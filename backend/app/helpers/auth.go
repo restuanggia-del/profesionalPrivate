@@ -5,9 +5,9 @@ import (
 )
 
 func GetUserID(r *http.Request) uint {
-	userID, ok := r.Context().Value("user_id").(uint)
-	if !ok {
+	userID := r.Context().Value("user_id")
+	if userID == nil {
 		return 0
 	}
-	return userID
+	return userID.(uint)
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/restuanggia/profesionalPrivate/app/helpers"
@@ -8,40 +9,51 @@ import (
 )
 
 func JoinCourse(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value("user_id").(uint)
+	userID := r.Context().Value("user_id")
+	if userID == nil {
+		helpers.JSON(w, http.StatusUnauthorized, "Unauthorized", nil)
+		return
+	}
 
-	var req struct {
+	var input struct {
 		CourseID uint `json:"course_id"`
 	}
 
-	if err := helpers.ParseJSON(r, &req); err != nil {
-		helpers.JSON(w, http.StatusBadRequest, "Invalid request", nil)
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		helpers.JSON(w, http.StatusBadRequest, "Invalid request body", nil)
+		return
+	}
+
+	if input.CourseID == 0 {
+		helpers.JSON(w, http.StatusBadRequest, "course_id diperlukan", nil)
 		return
 	}
 
 	db := helpers.GetDB()
 
-	// Cek course ada atau tidak
 	var course models.Course
-	if err := db.First(&course, req.CourseID).Error; err != nil {
-		helpers.JSON(w, http.StatusNotFound, "Course not found", nil)
+	if err := db.First(&course, input.CourseID).Error; err != nil {
+		helpers.JSON(w, http.StatusNotFound, "Kelas tidak ditemukan", nil)
 		return
 	}
 
-	// Cek sudah join atau belum
 	var existing models.Enrollment
-	if err := db.Where("user_id = ? AND course_id = ?", userID, req.CourseID).
-		First(&existing).Error; err == nil {
-		helpers.JSON(w, http.StatusBadRequest, "Already enrolled", nil)
+	result := db.Where("user_id = ? AND course_id = ?", userID, input.CourseID).First(&existing)
+	if result.Error == nil {
+		helpers.JSON(w, http.StatusConflict, "Kamu sudah terdaftar di kelas ini", nil)
 		return
 	}
 
 	enrollment := models.Enrollment{
-		UserID:   userID,
-		CourseID: req.CourseID,
+		UserID:   userID.(uint),
+		CourseID: input.CourseID,
+		Progress: 0,
 	}
 
-	db.Create(&enrollment)
+	if err := db.Create(&enrollment).Error; err != nil {
+		helpers.JSON(w, http.StatusInternalServerError, "Gagal bergabung ke kelas", nil)
+		return
+	}
 
-	helpers.JSON(w, http.StatusCreated, "Successfully joined course", enrollment)
+	helpers.JSON(w, http.StatusCreated, "Berhasil bergabung ke kelas", enrollment)
 }

@@ -6,13 +6,12 @@ import {
   BookOpen,
   Users,
   ClipboardList,
-  TrendingUp,
   Plus,
-  LogOut,
   BarChart2,
   ChevronRight,
   Star,
 } from "lucide-react";
+import Navbar from "@/app/components/Navbar";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
 
@@ -27,6 +26,7 @@ function authHeaders() {
   };
 }
 
+// ── Types ────────────────────────────────────────────────────────────────────
 type User = { id: number; name: string; email: string; role: string };
 type Analytics = {
   total_courses: number;
@@ -41,6 +41,7 @@ type Course = {
   created_at: string;
 };
 
+// ── Stat Card ─────────────────────────────────────────────────────────────────
 function StatCard({
   icon,
   label,
@@ -63,6 +64,7 @@ function StatCard({
   );
 }
 
+// ── Modal Buat Kelas ──────────────────────────────────────────────────────────
 function CreateCourseModal({
   onClose,
   onCreated,
@@ -158,6 +160,7 @@ function CreateCourseModal({
   );
 }
 
+// ── Modal Buat Quiz ───────────────────────────────────────────────────────────
 function CreateQuizModal({
   courses,
   onClose,
@@ -352,35 +355,7 @@ export default function TeacherPage() {
   return (
     <AuthGuard allow={["teacher"]}>
       <div className="min-h-screen bg-gray-50">
-        {/* Navbar */}
-        <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <BookOpen size={16} className="text-white" />
-            </div>
-            <span className="font-bold text-gray-800">ProfesionalPrivate</span>
-            <span className="text-gray-300 mx-1">|</span>
-            <span className="text-sm text-indigo-600 font-medium">Teacher</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-gray-800">
-                {user?.name}
-              </p>
-              <p className="text-xs text-gray-400">{user?.email}</p>
-            </div>
-            <div className="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold text-sm">
-              {user?.name?.charAt(0).toUpperCase()}
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-500 transition"
-            >
-              <LogOut size={16} />
-              <span className="hidden sm:inline">Keluar</span>
-            </button>
-          </div>
-        </nav>
+        <Navbar />
 
         <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
           {/* Header */}
